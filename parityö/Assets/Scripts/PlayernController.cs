@@ -88,11 +88,11 @@ public class PlayerMovement : MonoBehaviour
         currentAmmo = maxAmmo;
         Destroy(gameObject);
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.gameObject.CompareTag("Ammo"))
+        if (collision.CompareTag("Ammo"))
         {
-            TakeDamage(10);
+            TakeDamage(1);
             Destroy(collision.gameObject);
         }
     }
