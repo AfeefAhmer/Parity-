@@ -92,7 +92,7 @@ public class PlayerController : MonoBehaviour
     {
         if (collision.CompareTag("Ammo"))
         {
-            TakeDamage(1);
+            TakeDamage(10);
             Destroy(collision.gameObject);
         }
     }
