@@ -16,13 +16,16 @@ public class PlayerController : MonoBehaviour
     //Health
     public int maxHealth = 1;
     private int currentHealth;
-
+  
     void Start()
     {
         currentAmmo = maxAmmo;
         currentHealth = maxHealth;
     }
-
+    public int GetAmmo()
+    {
+        return currentAmmo;
+    }
     void Update()
     {
         Move();

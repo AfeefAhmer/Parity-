@@ -7,7 +7,6 @@ public class PlayerController2 : MonoBehaviour
     public GameObject bulletPrefab;
     public Transform firePoint;
     public float bulletSpeed = 10f;
-
     public int maxAmmo = 5;
     private int ammo;
 
@@ -24,6 +23,10 @@ public class PlayerController2 : MonoBehaviour
         Shoot();
     }
 
+    public int GetAmmo()
+    {
+        return ammo;
+    }
     void Move()
     {
         float x = Input.GetAxisRaw("Horizontal"); // WASD toimii automaattisesti
