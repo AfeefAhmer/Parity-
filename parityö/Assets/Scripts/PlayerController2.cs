@@ -7,10 +7,13 @@ public class PlayerController2 : MonoBehaviour
     public GameObject bulletPrefab;
     public Transform firePoint;
     public float bulletSpeed = 10f;
+
     public int maxAmmo = 5;
     private int ammo;
 
     public int health = 1;
+
+    private Vector2 lastMoveDir = Vector2.up; // muistaa suunnan
 
     void Start()
     {
@@ -23,17 +26,19 @@ public class PlayerController2 : MonoBehaviour
         Shoot();
     }
 
-    public int GetAmmo()
-    {
-        return ammo;
-    }
     void Move()
     {
-        float x = Input.GetAxisRaw("Horizontal"); // WASD toimii automaattisesti
+        float x = Input.GetAxisRaw("Horizontal");
         float y = Input.GetAxisRaw("Vertical");
 
-        Vector3 move = new Vector3(x, y, 0f).normalized;
-        transform.position += move * speed * Time.deltaTime;
+        Vector2 move = new Vector2(x, y).normalized;
+
+        if (move != Vector2.zero)
+        {
+            lastMoveDir = move; // tallennetaan suunta
+        }
+
+        transform.position += (Vector3)move * speed * Time.deltaTime;
     }
 
     void Shoot()
@@ -41,15 +46,22 @@ public class PlayerController2 : MonoBehaviour
         if (!Input.GetKeyDown(KeyCode.E)) return;
         if (ammo <= 0) return;
 
-        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+        GameObject bullet = Instantiate(bulletPrefab, firePoint.position, Quaternion.identity);
 
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         if (rb != null)
         {
-            rb.linearVelocity = firePoint.right * bulletSpeed;
+            rb.linearVelocity = lastMoveDir * bulletSpeed;
+            bullet.transform.up = lastMoveDir;
         }
 
         ammo--;
+    }
+
+   
+    public int GetAmmo()
+    {
+        return ammo;
     }
 
     public void TakeDamage(int damage)
