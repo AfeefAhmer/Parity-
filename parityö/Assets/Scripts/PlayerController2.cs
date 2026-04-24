@@ -11,13 +11,16 @@ public class PlayerController2 : MonoBehaviour
     public int maxAmmo = 5;
     private int ammo;
 
-    public int health = 1;
+    public int maxHealth = 1;
+    private int currentHealth;
 
     private Vector2 lastMoveDir = Vector2.up; // muistaa suunnan
+    private bool isDead = false; 
 
     void Start()
     {
         ammo = maxAmmo;
+        currentHealth = maxHealth; 
     }
 
     void Update()
@@ -28,17 +31,23 @@ public class PlayerController2 : MonoBehaviour
 
     void Move()
     {
-        float x = Input.GetAxisRaw("Horizontal");
-        float y = Input.GetAxisRaw("Vertical");
+        float moveX = 0f;
+        float moveY = 0f;
 
-        Vector2 move = new Vector2(x, y).normalized;
+        if (Input.GetKey(KeyCode.A)) moveX = -1f;
+        if (Input.GetKey(KeyCode.D)) moveX = 1f;
+        if (Input.GetKey(KeyCode.W)) moveY = 1f;
+        if (Input.GetKey(KeyCode.S)) moveY = -1f;
 
-        if (move != Vector2.zero)
+        Vector2 dir = new Vector2(moveX, moveY).normalized;
+
+        if (dir != Vector2.zero)
         {
-            lastMoveDir = move; // tallennetaan suunta
+            lastMoveDir = dir; 
         }
 
-        transform.position += (Vector3)move * speed * Time.deltaTime;
+        Vector3 movement = new Vector3(moveX, moveY, 0f);
+        transform.Translate(movement * speed * Time.deltaTime);
     }
 
     void Shoot()
@@ -58,17 +67,22 @@ public class PlayerController2 : MonoBehaviour
         ammo--;
     }
 
-   
     public int GetAmmo()
     {
         return ammo;
     }
 
+    public bool IsDead()
+    {
+        return isDead;
+    }
+
     public void TakeDamage(int damage)
     {
-        health -= damage;
+        currentHealth -= damage;
+        Debug.Log("HP: " + currentHealth);
 
-        if (health <= 0)
+        if (currentHealth <= 0)
         {
             Die();
         }
@@ -76,6 +90,22 @@ public class PlayerController2 : MonoBehaviour
 
     void Die()
     {
+        isDead = true; 
+        Debug.Log("Player died!");
+
+        // yksinkertainen reset
+        transform.position = Vector3.zero;
+        currentHealth = maxHealth;
+        ammo = maxAmmo;
         Destroy(gameObject);
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Ammo"))
+        {
+            TakeDamage(10);
+            Destroy(collision.gameObject);
+        }
     }
 }

@@ -2,21 +2,25 @@ using UnityEngine;
 
 public class AmmoController : MonoBehaviour
 {
-    public float speed = 10f;
+    //public float speed = 10f;
     public float lifetime = 5f;
-
+    //Rigidbody2D rb;
     void Start()
     {
+        //rb= GetComponent<Rigidbody2D>();
         Destroy(gameObject, lifetime); // varmuuden vuoksi
     }
 
-    void Update()
-    {
-        transform.Translate(Vector3.forward * speed * Time.deltaTime);
-    }
+    //void Update()
+    //{
+    //    rb.linearVelocity=(transform.right * speed);
+    //}
 
-    void OnCollisionEnter(Collision collision)
+    void OnTriggerEnter2D(Collider2D collision)
     {
-        Destroy(gameObject);
+        if (collision.CompareTag("Wall"))
+        {
+            Destroy(gameObject);
+        }
     }
 }

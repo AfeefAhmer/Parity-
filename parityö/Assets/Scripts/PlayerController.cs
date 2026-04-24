@@ -13,21 +13,32 @@ public class PlayerController : MonoBehaviour
     public int maxAmmo = 5;
     private int currentAmmo;
 
-    //Health
+    // Health
     public int maxHealth = 1;
     private int currentHealth;
-  
+
+    private bool isDead = false;
+
     void Start()
     {
         currentAmmo = maxAmmo;
         currentHealth = maxHealth;
     }
+
     public int GetAmmo()
     {
         return currentAmmo;
     }
+
+    public bool IsDead()
+    {
+        return isDead;
+    }
+
     void Update()
     {
+        if (isDead) return;
+
         Move();
         Shoot();
     }
@@ -67,12 +78,14 @@ public class PlayerController : MonoBehaviour
                 bullet.transform.up = dir;
             }
 
-            currentAmmo--; // 🔥 vähennä ammo
-            Debug.Log("Ammo left: " + currentAmmo);
+            currentAmmo--;
         }
     }
+
     public void TakeDamage(int damage)
     {
+        if (isDead) return;
+
         currentHealth -= damage;
         Debug.Log("HP: " + currentHealth);
 
@@ -81,23 +94,22 @@ public class PlayerController : MonoBehaviour
             Die();
         }
     }
+
     void Die()
     {
+        isDead = true;
         Debug.Log("Player died!");
 
-        // yksinkertainen reset
-        transform.position = Vector3.zero;
-        currentHealth = maxHealth;
-        currentAmmo = maxAmmo;
-        Destroy(gameObject);
+        // Piilotetaan pelaaja (ei tuhota heti)
+        gameObject.SetActive(false);
     }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.CompareTag("Ammo"))
         {
-            TakeDamage(10);
+            TakeDamage(1); // 1 damage riittää kun maxHealth = 1
             Destroy(collision.gameObject);
         }
     }
-
 }
